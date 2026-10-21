@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+    inputs:
+      minutes:
+        description: 'Duração em segundos (para teste)'
+        required: false
+        default: '21540'
 
 concurrency:
   group: claims-feed
@@ -28,7 +33,7 @@ jobs:
         run: npm run build
 
       - name: rodar
-        run: timeout 21540 node dist/index.js || true
+        run: timeout ${{ github.event.inputs.minutes || '21540' }} node dist/index.js || true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
