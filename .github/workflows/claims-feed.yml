@@ -45,4 +45,4 @@ jobs:
           MIN_CLAIM_SOL: '1'
           DRY_RUN: 'false'
           POLL_INTERVAL_SECONDS: '30'
-          LOG_LEVEL: info
+          LOG_LEVEL: debug
