@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PumpFun Channel Bot — Event Monitor
  *
  * Monitors the Pump program for on-chain events:
@@ -259,7 +259,7 @@ export class EventMonitor {
         try {
             const tx = await this.rpc.withFallback((conn) => conn.getParsedTransaction(signature, {
                 commitment: 'confirmed',
-                maxSupportedTransactionVersion: 0,
+                maxSupportedTransactionVersion: 1,
             }));
             if (!tx?.meta || tx.meta.err) return;
 
