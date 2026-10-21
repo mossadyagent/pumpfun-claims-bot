@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PumpFun Channel Bot — Entry Point
  *
  * A read-only Telegram channel feed that broadcasts:
@@ -96,6 +96,7 @@ async function main(): Promise<void> {
     /** Send a message to the channel. Throws on failure. */
     async function postToChannel(message: string): Promise<void> {
         const safe = sanitiseHtml(message);
+        if (config.dryRun) { log.info('[DRY] %s', safe.replace(/<[^>]+>/g, '').replace(/\n/g, ' | ').slice(0, 400)); return; }
         try {
             await withRetry(() => bot.api.sendMessage(config.channelId, safe, {
                 parse_mode: 'HTML',
@@ -120,6 +121,7 @@ async function main(): Promise<void> {
             return;
         }
         try {
+            if (config.dryRun) { log.info('[DRY-photo] %s', safe.replace(/<[^>]+>/g, '').replace(/\n/g, ' | ').slice(0, 400)); return; }
             await withRetry(() => bot.api.sendPhoto(config.channelId, imageUrl, {
                 caption: safe,
                 parse_mode: 'HTML',
@@ -142,6 +144,10 @@ async function main(): Promise<void> {
     if (config.feed.claims) {
       claimMonitor = new ClaimMonitor(config, async (event: FeeClaimEvent) => {
       try {
+        if ((event.amountSol ?? 0) < config.minClaimSol) {
+          log.debug('claim abaixo do minimo (%s < %s) ignorado', event.amountSol, config.minClaimSol);
+          return;
+        }
         pipeline.total++;
 
         // Skip cashback claims (user refunds, not creator activity)
