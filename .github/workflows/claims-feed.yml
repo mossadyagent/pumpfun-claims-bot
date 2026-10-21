@@ -38,6 +38,6 @@ jobs:
           FEED_FEE_DISTRIBUTIONS: 'true'
           REQUIRE_GITHUB: 'false'
           MIN_CLAIM_SOL: '1'
-          DRY_RUN: 'true'
+          DRY_RUN: 'false'
           POLL_INTERVAL_SECONDS: '30'
           LOG_LEVEL: info
