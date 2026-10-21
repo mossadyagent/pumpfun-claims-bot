@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PumpFun Channel Bot — Solana Fee Claim Monitor
  *
  * Monitors both Pump and PumpSwap programs for fee claim transactions.
@@ -199,7 +199,7 @@ export class ClaimMonitor {
                 if (sigInfo.err) continue;
                 const tx = await this.rpc.withFallback((conn) =>
                     conn.getTransaction(sigInfo.signature, {
-                        maxSupportedTransactionVersion: 0,
+                        maxSupportedTransactionVersion: 1,
                         commitment: 'confirmed',
                     }),
                 );
@@ -236,7 +236,7 @@ export class ClaimMonitor {
             for (const sigInfo of sigs) {
                 const tx = await this.rpc.withFallback((conn) =>
                     conn.getTransaction(sigInfo.signature, {
-                        maxSupportedTransactionVersion: 0,
+                        maxSupportedTransactionVersion: 1,
                         commitment: 'confirmed',
                     }),
                 );
@@ -456,7 +456,10 @@ export class ClaimMonitor {
 
         for (const line of logs) {
             // Detect claim_social_fee_pda via Anchor instruction log
-            if (!hasClaimIx && line.includes('Program log: Instruction: ClaimSocialFeePda')) {
+            if (!hasClaimIx && (line.includes('Instruction: ClaimSocialFeePda')
+                || line.includes('Instruction: CollectCreatorFee')
+                || line.includes('Instruction: CollectCoinCreatorFee')
+                || line.includes('Instruction: DistributeCreatorFees'))) {
                 hasClaimIx = true;
             }
 
@@ -577,7 +580,7 @@ export class ClaimMonitor {
         try {
             const tx = await this.rpc.withFallback((conn) => conn.getParsedTransaction(signature, {
                 commitment: 'confirmed',
-                maxSupportedTransactionVersion: 0,
+                maxSupportedTransactionVersion: 1,
             }));
             if (!tx?.meta || tx.meta.err) return;
 
