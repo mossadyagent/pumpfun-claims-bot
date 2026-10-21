@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PumpFun Channel Bot — Configuration
  *
  * Loads and validates environment variables for the read-only channel feed.
@@ -33,6 +33,10 @@ export interface ChannelBotConfig {
     requireGithub: boolean;
     /** Minimum SOL for whale alerts */
     whaleThresholdSol: number;
+    /** Only post claims with at least this many SOL */
+    minClaimSol: number;
+    /** Log instead of posting to Telegram */
+    dryRun: boolean;
     /** Affiliate ref codes for trading links */
     affiliates: {
         axiom: string;
@@ -122,9 +126,14 @@ export function loadConfig(): ChannelBotConfig {
         port: Number.parseInt(process.env.MCP_PORT || '3001', 10),
     };
 
+    const minClaimSol = Number.parseFloat(process.env.MIN_CLAIM_SOL || '1');
+    const dryRun = (process.env.DRY_RUN || 'false').toLowerCase() === 'true';
+
     return {
         affiliates,
         channelId,
+        dryRun,
+        minClaimSol,
         feed,
         logLevel,
         mcp,
